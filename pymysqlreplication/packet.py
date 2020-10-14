@@ -385,22 +385,40 @@ class BinLogPacketWrapper(object):
         raise ValueError('Json type %d is not handled' % t)
 
     def read_binary_json_type_inlined(self, t, large):
-        if t == JSONB_TYPE_LITERAL:
-            value = self.read_uint32() if large else self.read_uint16()
-            if value == JSONB_LITERAL_NULL:
-                return None
-            elif value == JSONB_LITERAL_TRUE:
-                return True
-            elif value == JSONB_LITERAL_FALSE:
-                return False
-        elif t == JSONB_TYPE_INT16:
-            return self.read_int16()
-        elif t == JSONB_TYPE_UINT16:
-            return self.read_uint16()
-        elif t == JSONB_TYPE_INT32:
-            return self.read_int32()
-        elif t == JSONB_TYPE_UINT32:
-            return self.read_uint32()
+        if large:
+            if t == JSONB_TYPE_LITERAL:
+                value = self.read_uint32()
+                if value == JSONB_LITERAL_NULL:
+                    return None
+                elif value == JSONB_LITERAL_TRUE:
+                    return True
+                elif value == JSONB_LITERAL_FALSE:
+                    return False
+            elif t == JSONB_TYPE_INT16:
+                return self.read_int32()
+            elif t == JSONB_TYPE_UINT16:
+                return self.read_uint32()
+            elif t == JSONB_TYPE_INT32:
+                return self.read_int64()
+            elif t == JSONB_TYPE_UINT32:
+                return self.read_uint64()
+        else:
+            if t == JSONB_TYPE_LITERAL:
+                value = self.read_uint16()
+                if value == JSONB_LITERAL_NULL:
+                    return None
+                elif value == JSONB_LITERAL_TRUE:
+                    return True
+                elif value == JSONB_LITERAL_FALSE:
+                    return False
+            elif t == JSONB_TYPE_INT16:
+                return self.read_int16()
+            elif t == JSONB_TYPE_UINT16:
+                return self.read_uint16()
+            elif t == JSONB_TYPE_INT32:
+                return self.read_int32()
+            elif t == JSONB_TYPE_UINT32:
+                return self.read_uint32()
 
         raise ValueError('Json type %d is not handled' % t)
 
